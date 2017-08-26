@@ -6,7 +6,6 @@ from datetime import datetime
 from urllib.request import urlopen
 from xml.dom.minidom import parseString, getDOMImplementation
 
-FEED_ENCODING = 'ISO-8859-1'
 FEED_INPUT = dict((
     name, ''.join([
         'http://www.frankenpost.de/storage/rss/rss/fp/', name, '.xml'
@@ -40,7 +39,7 @@ class Input(object):
     def doc(self):
         if self._doc is None:
             with urlopen(self.url) as resp:
-                doc = resp.read().decode(FEED_ENCODING)
+                doc = resp.read().decode('ISO-8859-1')
                 self._doc = parseString(doc)
         return self._doc
 
@@ -120,10 +119,10 @@ class Output(object):
         self.append(chan, 'lastBuildDate', fnow)
         for entry in self.entries:
             chan.appendChild(entry)
-        return doc.toprettyxml(encoding=FEED_ENCODING)
+        return doc.toprettyxml()
 
     def save(self, filename):
-        with open(filename, 'wb') as handle:
+        with open(filename, 'w') as handle:
             handle.write(self.feed)
         return True
 
