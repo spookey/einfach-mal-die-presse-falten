@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 
-from sys import argv
-from email.utils import format_datetime
+from argparse import ArgumentParser
 from datetime import datetime
+from email.utils import format_datetime
 from urllib.request import urlopen
-from xml.dom.minidom import parseString, getDOMImplementation
+from xml.dom.minidom import getDOMImplementation, parseString
 
 FEED_INPUT = dict((
     name, ''.join([
@@ -24,6 +24,27 @@ FEED_INPUT = dict((
     'nachrichten_wirtschaft',
     'sport_verselb',
 ))
+
+
+def arguments():
+    parser = ArgumentParser(__file__, epilog='-.-')
+    parser.add_argument(
+        '-f', '--file', default='frankenpest.xml',
+        help='output feed filename (default: %(default)s)',
+    )
+    parser.add_argument(
+        '-p', '--premium', default='***',
+        help='title prefix for premium articles (default: %(default)s)',
+    )
+    parser.add_argument(
+        '-t', '--title', default='Frankenpest',
+        help='feed title (default: %(default)s)',
+    )
+    parser.add_argument(
+        '-d', '--desc', default='Frankenpest Breaking News',
+        help='feed description (default: %(default)s)',
+    )
+    return parser.parse_args()
 
 
 class Input(object):
@@ -68,21 +89,23 @@ class Input(object):
 
 
 class Output(object):
-    def __init__(self):
+    def __init__(self, args):
+        self.args = args
         self.dom = getDOMImplementation().createDocument(None, 'rss', None)
 
     @property
     def entries(self):
-        guids = []
+        tracked = ('guid', 'title')
+        temp = []
         for entry in [fl for at in [
-                Input(name, url).entries for name, url in FEED_INPUT.items()
+            Input(name, url).entries for name, url in FEED_INPUT.items()
         ] for fl in at]:
-            if entry['title'].startswith('***'):
+            if entry['title'].lstrip().startswith(self.args.premium):
                 continue
 
-            if entry['guid'] not in guids:
+            if all(entry[elem] not in temp for elem in tracked):
+                temp.extend([entry[elem] for elem in tracked])
                 yield entry['item']
-            guids.append(entry['guid'])
 
     def append(self, parent, tag, text=None):
         node = self.dom.createElement(tag)
@@ -111,9 +134,9 @@ class Output(object):
         )
         chan = self.append(doc, 'channel')
         fnow = format_datetime(datetime.now())
-        self.append(chan, 'title', 'Frankenpest')
+        self.append(chan, 'title', self.args.title)
         self.append(chan, 'link', 'http://www.frankenpost.de/')
-        self.append(chan, 'description', 'Frankenpest Breaking News')
+        self.append(chan, 'description', self.args.desc)
         self.append(chan, 'lang', 'de-DE')
         self.append(chan, 'pubDate', fnow)
         self.append(chan, 'lastBuildDate', fnow)
@@ -121,12 +144,11 @@ class Output(object):
             chan.appendChild(entry)
         return doc.toprettyxml()
 
-    def save(self, filename):
-        with open(filename, 'w') as handle:
+    def save(self):
+        with open(self.args.file, 'w') as handle:
             handle.write(self.feed)
         return True
 
 
 if __name__ == '__main__':
-    filename = argv[1] if len(argv) > 1 else 'frankenpest.xml'
-    exit(not Output().save(filename))
+    exit(not Output(arguments()).save())
