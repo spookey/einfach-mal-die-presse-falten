@@ -95,16 +95,16 @@ class Output(object):
 
     @property
     def entries(self):
-        tracked = ('guid', 'title')
-        temp = []
+        fields = ('guid', 'title', 'description')
+        tracked = set()
         for entry in [fl for at in [
             Input(name, url).entries for name, url in FEED_INPUT.items()
         ] for fl in at]:
             if entry['title'].lstrip().startswith(self.args.premium):
                 continue
 
-            if all(entry[elem] not in temp for elem in tracked):
-                temp.extend([entry[elem] for elem in tracked])
+            if all(entry[fld].strip() not in tracked for fld in fields):
+                [tracked.add(entry[fld].strip()) for fld in fields]
                 yield entry['item']
 
     def append(self, parent, tag, text=None):
