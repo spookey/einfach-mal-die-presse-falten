@@ -28,8 +28,6 @@ FEED_INPUT = dict((
     'nachrichten_wirtschaft',
     'sport_verselb',
 ))
-TREAT_FIELDS = ('guid', 'link', 'title', 'description')
-OUTPUT_FIELDS = ('guid', 'link', 'title', 'pubDate')
 
 
 def arguments():
@@ -144,8 +142,9 @@ class Treat(object):
     def append(self, entry):
         if entry['title'].strip().startswith(self.args.premium):
             return
+        fields = ('guid', 'link', 'title', 'description')
         for item in self.cache:
-            for field in TREAT_FIELDS:
+            for field in fields:
                 if entry[field] == item[field]:
                     return
         self._cache.append(entry)
@@ -161,25 +160,33 @@ class Treat(object):
 class Output(object):
     def __init__(self, args):
         self.args = args
+        self.treat = Treat(args)
         self.dom = getDOMImplementation().createDocument(None, 'rss', None)
-        self.source = Treat(args)
 
-    def append(self, parent, tag, text=None):
+    def append(self, parent, tag, text=None, data=False):
         node = self.dom.createElement(tag)
         if text is not None:
-            node.appendChild(self.dom.createTextNode(text))
+            node.appendChild((
+                self.dom.createCDATASection
+                if data else
+                self.dom.createTextNode
+            )(text))
         parent.appendChild(node)
         return node
 
     @property
     def items(self):
-        for entry in self.source.entries:
+        fields = ('guid', 'link', 'pubDate')
+        for entry in self.treat.entries:
             item = self.dom.createElement('item')
-            for field in OUTPUT_FIELDS:
+            self.append(item, 'title', entry['title'], True)
+            for field in fields:
                 self.append(item, field, entry[field])
-            self.append(item, 'title', ' - '.join(
-                entry[fl] for fl in ['origin', 'description']
-            ))
+            self.append(item, 'description', '({}) {}'.format(
+                ' '.join(
+                    og.capitalize() for og in entry['origin'].split('_')
+                ), entry['description']
+            ), True)
             yield item
 
     @property
@@ -190,16 +197,19 @@ class Output(object):
         self.append(chan, 'title', self.args.title)
         self.append(chan, 'link', BASE_URL)
         self.append(chan, 'description', self.args.desc)
-        self.append(chan, 'lang', 'de-DE')
-        self.append(chan, 'pubDate', format_datetime(self.source.now))
-        self.append(chan, 'lastBuildDate', format_datetime(self.source.now))
+        self.append(chan, 'language', 'de-DE')
+        self.append(chan, 'pubDate', format_datetime(self.treat.now))
+        self.append(chan, 'lastBuildDate', format_datetime(self.treat.now))
         for item in self.items:
             chan.appendChild(item)
-        return doc.toprettyxml()
+        return doc.toprettyxml(
+            indent='  ', encoding='utf-8'
+        ).decode('utf-8')
 
     def __call__(self):
+        feed = self.feed
         with open(self.args.file, 'w') as op:
-            return op.write(self.feed) > 0
+            return op.write(feed) > 0
 
 
 if __name__ == '__main__':
