@@ -102,7 +102,6 @@ class Treat(object):
     def __init__(self, args):
         self.args = args
         self.now = datetime.utcnow()
-        self._cache = None
 
     def _read(self):
         if exists(self.args.cache):
@@ -113,22 +112,14 @@ class Treat(object):
     def epoch(self, time):
         return int((time - datetime.utcfromtimestamp(0)).total_seconds())
 
-    def stripped(self, cache):
+    def cached(self):
         limit = self.epoch(self.now - timedelta(days=self.args.keep))
-        for elem in cache:
-            if elem['time'] >= limit:
-                yield elem
+        cache = self._read()
+        return [elem for elem in cache if elem['time'] >= limit]
 
-    @property
-    def cache(self):
-        if self._cache is None:
-            cache = self._read()
-            self._cache = list(self.stripped(cache))
-        return self._cache
-
-    def _write(self):
+    def _write(self, cache):
         with open(self.args.cache, 'w') as op:
-            op.write(dumps(self.cache, indent=2))
+            op.write(dumps(cache, indent=2))
 
     @property
     def pull(self):
@@ -139,22 +130,24 @@ class Treat(object):
             entry['time'] = time
             yield entry
 
-    def append(self, entry):
+    def valuable(self, cache, entry):
         if entry['title'].strip().startswith(self.args.premium):
-            return
+            return False
         fields = ('guid', 'link', 'title', 'description')
-        for item in self.cache:
+        for item in cache:
             for field in fields:
                 if entry[field] == item[field]:
-                    return
-        self._cache.append(entry)
+                    return False
+        return True
 
     @property
     def entries(self):
+        cache = self.cached()
         for entry in self.pull:
-            self.append(entry)
-        self._write()
-        return self.cache
+            if self.valuable(cache, entry):
+                cache.append(entry)
+        self._write(cache)
+        return cache
 
 
 class Output(object):
