@@ -76,10 +76,6 @@ class Input(object):
                 self._doc = parseString(doc)
         return self._doc
 
-    @property
-    def items(self):
-        return self.doc.getElementsByTagName('item')
-
     @staticmethod
     def entry(item):
         for elem in item.childNodes:
@@ -91,7 +87,7 @@ class Input(object):
                 yield elem.nodeName, cont
 
     def __call__(self):
-        for item in self.items:
+        for item in self.doc.getElementsByTagName('item'):
             result = dict(self.entry(item))
             result.update(origin=self.name)
             yield result
@@ -111,9 +107,12 @@ class Treat(object):
     def epoch(self, time):
         return int((time - datetime.utcfromtimestamp(0)).total_seconds())
 
-    def limited(self, cache):
+    def limited_order(self, cache):
         limit = self.epoch(self.now - timedelta(days=self.args.keep))
-        return [elem for elem in cache if elem['time'] >= limit]
+        return list(sorted(
+            (elem for elem in cache if elem['time'] >= limit),
+            key=lambda el: el['time'], reverse=True
+        ))
 
     def _write(self, cache):
         with open(self.args.cache, 'w') as op:
@@ -143,7 +142,8 @@ class Treat(object):
         for entry in self.pull:
             if self.valuable(cache, entry):
                 cache.append(entry)
-        self._write(self.limited(cache))
+        cache = self.limited_order(cache)
+        self._write(cache)
         return cache
 
 
