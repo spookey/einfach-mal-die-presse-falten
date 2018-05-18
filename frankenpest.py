@@ -90,8 +90,7 @@ class Input(object):
             if cont:
                 yield elem.nodeName, cont
 
-    @property
-    def entries(self):
+    def __call__(self):
         for item in self.items:
             result = dict(self.entry(item))
             result.update(origin=self.name)
@@ -112,9 +111,8 @@ class Treat(object):
     def epoch(self, time):
         return int((time - datetime.utcfromtimestamp(0)).total_seconds())
 
-    def cached(self):
+    def limited(self, cache):
         limit = self.epoch(self.now - timedelta(days=self.args.keep))
-        cache = self._read()
         return [elem for elem in cache if elem['time'] >= limit]
 
     def _write(self, cache):
@@ -125,7 +123,7 @@ class Treat(object):
     def pull(self):
         time = self.epoch(self.now)
         for entry in [fl for at in [
-            Input(name, url).entries for name, url in FEED_INPUT.items()
+            Input(name, url)() for name, url in FEED_INPUT.items()
         ] for fl in at]:
             entry['time'] = time
             yield entry
@@ -140,13 +138,12 @@ class Treat(object):
                     return False
         return True
 
-    @property
-    def entries(self):
-        cache = self.cached()
+    def __call__(self):
+        cache = self._read()
         for entry in self.pull:
             if self.valuable(cache, entry):
                 cache.append(entry)
-        self._write(cache)
+        self._write(self.limited(cache))
         return cache
 
 
@@ -170,15 +167,13 @@ class Output(object):
     @property
     def items(self):
         fields = ('guid', 'link', 'pubDate')
-        for entry in self.treat.entries:
+        for entry in self.treat():
             item = self.dom.createElement('item')
             self.append(item, 'title', entry['title'], True)
             for field in fields:
                 self.append(item, field, entry[field])
-            self.append(item, 'description', '({}) {}'.format(
-                ' '.join(
-                    og.capitalize() for og in entry['origin'].split('_')
-                ), entry['description']
+            self.append(item, 'description', '{} [{}]'.format(
+                entry['description'], entry['origin']
             ), True)
             yield item
 
