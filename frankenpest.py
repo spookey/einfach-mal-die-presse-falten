@@ -173,8 +173,9 @@ class Output(object):
             self.append(item, 'title', entry['title'], True)
             for field in fields:
                 self.append(item, field, entry[field])
-            self.append(item, 'description', '[{}] {}'.format(
-                entry['origin'], entry['description']
+            self.append(item, 'description', '{} - {}'.format(
+                entry['origin'].split('_')[-1].upper(),
+                entry['description']
             ), True)
             yield item
 
