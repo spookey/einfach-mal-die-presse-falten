@@ -100,11 +100,12 @@ class Treat(object):
 
     def _read(self):
         if exists(self.args.cache):
-            with open(self.args.cache, 'r') as op:
-                return loads(op.read())
+            with open(self.args.cache, 'r') as handle:
+                return loads(handle.read())
         return []
 
-    def epoch(self, time):
+    @staticmethod
+    def epoch(time):
         return int((time - datetime.utcfromtimestamp(0)).total_seconds())
 
     def limited_order(self, cache):
@@ -115,14 +116,14 @@ class Treat(object):
         ))
 
     def _write(self, cache):
-        with open(self.args.cache, 'w') as op:
-            op.write(dumps(cache, indent=2))
+        with open(self.args.cache, 'w') as handle:
+            handle.write(dumps(cache, indent=2))
 
     @property
     def pull(self):
         time = self.epoch(self.now)
         for entry in [fl for at in [
-            Input(name, url)() for name, url in FEED_INPUT.items()
+                Input(name, url)() for name, url in FEED_INPUT.items()
         ] for fl in at]:
             entry['time'] = time
             yield entry
@@ -172,8 +173,8 @@ class Output(object):
             self.append(item, 'title', entry['title'], True)
             for field in fields:
                 self.append(item, field, entry[field])
-            self.append(item, 'description', '{} [{}]'.format(
-                entry['description'], entry['origin']
+            self.append(item, 'description', '[{}] {}'.format(
+                entry['origin'], entry['description']
             ), True)
             yield item
 
@@ -196,8 +197,8 @@ class Output(object):
 
     def __call__(self):
         feed = self.feed
-        with open(self.args.file, 'w') as op:
-            return op.write(feed) > 0
+        with open(self.args.file, 'w') as handle:
+            return handle.write(feed) > 0
 
 
 if __name__ == '__main__':
