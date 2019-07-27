@@ -62,7 +62,7 @@ def arguments():
     return parser.parse_args()
 
 
-class Input(object):
+class Input:
     def __init__(self, name, url):
         self.name = name
         self.url = url
@@ -93,7 +93,7 @@ class Input(object):
             yield result
 
 
-class Treat(object):
+class Treat:
     def __init__(self, args):
         self.args = args
         self.now = datetime.utcnow()
@@ -148,7 +148,7 @@ class Treat(object):
         return cache
 
 
-class Output(object):
+class Output:
     def __init__(self, args):
         self.args = args
         self.treat = Treat(args)
