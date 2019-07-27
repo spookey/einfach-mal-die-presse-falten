@@ -129,12 +129,15 @@ class Treat:
             yield entry
 
     def valuable(self, cache, entry):
-        if entry['title'].strip().startswith(self.args.premium):
+        if entry.get('title', '').strip().startswith(self.args.premium):
             return False
         fields = ('guid', 'link', 'title', 'description')
         for item in cache:
             for field in fields:
-                if entry[field] == item[field]:
+                value = entry.get(field, None)
+                if not value:
+                    return False
+                if item.get(field, None) == value:
                     return False
         return True
 
