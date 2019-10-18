@@ -1,4 +1,5 @@
 from json import loads
+from urllib.error import URLError
 from urllib.request import urlopen
 
 ENCODING = 'UTF-8'
@@ -21,10 +22,14 @@ def fp_arg_premium(parser, _help):
 def lvz_fetch_full(elem):
     link = elem.get('link', None)
     if not link:
-        return elem
+        return None
 
-    with urlopen(link) as resp:
-        html = resp.read().decode(ENCODING)
+    try:
+        with urlopen(link) as resp:
+            html = resp.read().decode(ENCODING)
+    except URLError:
+        return None
+    else:
 
         for part in [
                 elem.split('ld+json">')[-1]
@@ -35,4 +40,5 @@ def lvz_fetch_full(elem):
             text = body.get('articleBody', None)
             if text:
                 elem['description'] = text
+
     return elem

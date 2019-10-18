@@ -46,7 +46,8 @@ class Convert:
             entry['time'] = time
             if self.extra:
                 entry = self.extra(entry)
-            yield entry
+            if entry:
+                yield entry
 
     def valuable(self, cache, entry):
         premium = getattr(self.args, 'premium', None)
