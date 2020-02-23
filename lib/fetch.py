@@ -23,12 +23,13 @@ class Fetch:
     @staticmethod
     def entry(item):
         for elem in item.childNodes:
-            elem.normalize()
-            content = unescape(
-                elem.firstChild.data if elem.hasChildNodes() else elem.data
-            )
-            if content and elem.nodeName in FIELDS:
-                yield (elem.nodeName, content)
+            if elem.nodeName in FIELDS:
+                elem.normalize()
+                content = unescape(
+                    elem.firstChild.data if elem.hasChildNodes() else elem.data
+                ).strip()
+                if content:
+                    yield (elem.nodeName, content)
 
     def __call__(self):
         for item in self.doc.getElementsByTagName('item'):
