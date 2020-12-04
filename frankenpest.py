@@ -2,7 +2,6 @@
 
 from lib.arguments import arguments
 from lib.convert import Convert
-from lib.extra import fp_arg_premium
 from lib.generate import Generate
 
 BASE_URL = 'https://www.frankenpost.de'
@@ -30,7 +29,7 @@ FEED_INPUT = {
 
 
 def main():
-    args = arguments(__file__, FEED_INPUT, extra=fp_arg_premium)
+    args = arguments(__file__, FEED_INPUT)
     conv = Convert(args, FEED_INPUT, encoding='UTF-8')
     return 0 if Generate(conv)(BASE_URL) else 1
 

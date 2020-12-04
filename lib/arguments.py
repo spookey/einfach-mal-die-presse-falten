@@ -2,7 +2,7 @@ from argparse import ArgumentParser
 from os import path
 
 
-def arguments(name, excludes, extra=None):
+def arguments(name, excludes):
     name, _ = path.splitext(path.basename(name).lower())
     title = ' '.join(nm.capitalize() for nm in name.split('_'))
     file = path.extsep.join((name, 'xml'))
@@ -40,7 +40,5 @@ def arguments(name, excludes, extra=None):
         '-x', '--excludes', nargs="*", default=[], choices=excludes,
         help='exclude some feeds from output',
     )
-    if extra:
-        extra(parser, _help)
 
     return parser.parse_args()

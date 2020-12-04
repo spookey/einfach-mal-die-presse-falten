@@ -13,13 +13,6 @@ FIELDS = (
 )
 
 
-def fp_arg_premium(parser, _help):
-    parser.add_argument(
-        '-p', '--premium', default='***',
-        help=_help('title prefix for premium articles'),
-    )
-
-
 def lvz_fetch_full(elem):
     link = elem.get('link', None)
     if not link:

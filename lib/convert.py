@@ -50,10 +50,6 @@ class Convert:
                 yield entry
 
     def valuable(self, cache, entry):
-        premium = getattr(self.args, 'premium', None)
-        if premium:
-            if entry.get('title', '').strip().startswith(premium):
-                return False
         for item in cache:
             for field in FIELDS:
                 value = entry.get(field, None)
