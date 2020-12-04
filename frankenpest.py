@@ -4,6 +4,7 @@ from sys import exit as _exit
 
 from lib.arguments import arguments
 from lib.convert import Convert
+from lib.extra import frankenpest_fetch_full
 from lib.generate import Generate
 
 BASE_URL = 'https://www.frankenpost.de'
@@ -32,7 +33,7 @@ FEED_INPUT = {
 
 def main():
     args = arguments(__file__, FEED_INPUT)
-    conv = Convert(args, FEED_INPUT, encoding='UTF-8')
+    conv = Convert(args, FEED_INPUT, extra=frankenpest_fetch_full)
     return 0 if Generate(conv)(BASE_URL) else 1
 
 
