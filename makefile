@@ -16,7 +16,16 @@ help:
 
 
 define _isort
-	$(CMD_ISORT) -cs -fss -m=5 -y -rc $(1)
+	$(CMD_ISORT) \
+		--combine-star \
+		--force-sort-within-sections \
+		--line-width="79" \
+		--multi-line "VERTICAL_HANGING_INDENT" \
+		--trailing-comma \
+		--force-grid-wrap 0 \
+		--use-parentheses \
+		--ensure-newline-before-comments \
+	$(1)
 endef
 
 .PHONY: sort
