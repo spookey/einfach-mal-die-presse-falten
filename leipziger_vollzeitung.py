@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+from sys import exit as _exit
+
 from lib.arguments import arguments
 from lib.convert import Convert
 from lib.extra import lvz_fetch_full
@@ -29,4 +31,4 @@ def main():
 
 
 if __name__ == '__main__':
-    exit(main())
+    _exit(main())

@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+from sys import exit as _exit
+
 from lib.arguments import arguments
 from lib.convert import Convert
 from lib.generate import Generate
@@ -35,4 +37,4 @@ def main():
 
 
 if __name__ == '__main__':
-    exit(main())
+    _exit(main())

@@ -49,7 +49,8 @@ class Convert:
             if entry:
                 yield entry
 
-    def valuable(self, cache, entry):
+    @staticmethod
+    def valuable(cache, entry):
         for item in cache:
             for field in FIELDS:
                 value = entry.get(field, None)
