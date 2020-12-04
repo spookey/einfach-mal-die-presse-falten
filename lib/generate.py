@@ -29,8 +29,11 @@ class Generate:
             self.append(item, 'guid', text=entry['guid'], data=False, **{
                 'isPermaLink': 'false'
             } if entry['link'] != entry['guid'] else {})
-            self.append(item, 'description', text='{} - {}'.format(
-                entry['origin'].split('_')[-1].upper(),
+            origin = entry['origin'].upper()
+            for char in ('_', '/'):
+                origin = origin.split(char)[-1]
+            self.append(item, 'description', text='{} {}'.format(
+                origin,
                 entry['description']
             ), data=True)
             for field in ('link', 'pubDate'):
