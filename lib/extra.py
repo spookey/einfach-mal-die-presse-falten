@@ -1,5 +1,3 @@
-from json import loads
-from json.decoder import JSONDecodeError
 from urllib.error import URLError
 from urllib.request import urlopen
 
@@ -47,26 +45,3 @@ def frankenpest_fetch_full(elem):
         elem.text.strip() for elem in (intro, *texts)
     )
     return elem
-
-
-def lvz_fetch_full(elem):
-    html = _fetch_html(elem)
-    if not html:
-        return None
-
-    for part in [
-        elem.split('ld+json">')[-1]
-        for elem in html.split("</script>")
-        if "ld+json" in elem
-    ]:
-        try:
-            body = loads(part)
-        except JSONDecodeError:
-            continue
-
-        text = body.get("articleBody", None)
-        if text:
-            elem["description"] = text
-            return elem
-
-    return None
