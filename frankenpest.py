@@ -7,26 +7,25 @@ from lib.convert import Convert
 from lib.extra import frankenpest_fetch_full
 from lib.generate import Generate
 
-BASE_URL = 'https://www.frankenpost.de'
+BASE_URL = "https://www.frankenpost.de"
 FEED_INPUT = {
-    name: ''.join([
-        BASE_URL, '/', name, '.rss.feed'
-    ]) for name in (
-        'topmeldung',
-        'auf-einen-blick',
-        'region',
-        'region/hof',
-        'region/rehau',
+    name: "".join([BASE_URL, "/", name, ".rss.feed"])
+    for name in (
+        "topmeldung",
+        "auf-einen-blick",
+        "region",
+        "region/hof",
+        "region/rehau",
         # 'region/naila',
         # 'region/muenchberg',
-        'region/fichtelgebirge',
-        'region/wunsiedel',
-        'region/marktredwitz',
-        'region/selb',
-        'region/arzberg',
+        "region/fichtelgebirge",
+        "region/wunsiedel",
+        "region/marktredwitz",
+        "region/selb",
+        "region/arzberg",
         # 'region/kulmbach',
-        'sport/ver_selb',
-        'sport/bayern_hof',
+        "sport/ver_selb",
+        "sport/bayern_hof",
     )
 }
 
@@ -37,5 +36,5 @@ def main():
     return 0 if Generate(conv)(BASE_URL) else 1
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     _exit(main())

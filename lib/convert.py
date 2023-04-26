@@ -16,7 +16,7 @@ class Convert:
 
     def _read(self):
         if path.exists(self.args.cache):
-            with open(self.args.cache, 'r') as handle:
+            with open(self.args.cache, "r") as handle:
                 return load(handle)
         return []
 
@@ -27,23 +27,28 @@ class Convert:
     def limited_ordered(self, cache):
         limit = self.epoch(self.now - timedelta(days=self.args.keep))
         return sorted(
-            (elem for elem in cache if elem['time'] >= limit),
-            key=lambda el: el['time'], reverse=True
+            (elem for elem in cache if elem["time"] >= limit),
+            key=lambda el: el["time"],
+            reverse=True,
         )
 
     def _write(self, cache):
-        with open(self.args.cache, 'w') as handle:
+        with open(self.args.cache, "w") as handle:
             dump(cache, handle, indent=2)
         return cache
 
     def pull(self, feed_input):
         time = self.epoch(self.now)
-        for entry in [fl for at in (
+        for entry in [
+            fl
+            for at in (
                 Fetch(name, url, encoding=self.encoding)()
                 for name, url in feed_input.items()
                 if name not in self.args.excludes
-        ) for fl in at]:
-            entry['time'] = time
+            )
+            for fl in at
+        ]:
+            entry["time"] = time
             if self.extra:
                 entry = self.extra(entry)
             if entry:

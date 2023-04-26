@@ -7,19 +7,18 @@ from lib.convert import Convert
 from lib.extra import lvz_fetch_full
 from lib.generate import Generate
 
-BASE_URL = 'https://www.lvz.de'
+BASE_URL = "https://www.lvz.de"
 FEED_INPUT = {
-    name: ''.join([
-        BASE_URL, '/rss/feed/', name
-    ]) for name in (
-        'lvz_kultur',
-        'lvz_leipzig',
-        'lvz_mitteldeutschland',
-        'lvz_nachrichten',
-        'lvz_ratgeber',
-        'lvz_region',
-        'lvz_reise',
-        'lvz_sport',
+    name: "".join([BASE_URL, "/rss/feed/", name])
+    for name in (
+        "lvz_kultur",
+        "lvz_leipzig",
+        "lvz_mitteldeutschland",
+        "lvz_nachrichten",
+        "lvz_ratgeber",
+        "lvz_region",
+        "lvz_reise",
+        "lvz_sport",
     )
 }
 
@@ -30,5 +29,5 @@ def main():
     return 0 if Generate(conv)(BASE_URL) else 1
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     _exit(main())

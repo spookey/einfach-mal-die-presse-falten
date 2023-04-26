@@ -43,7 +43,7 @@ class Fetch:
         if self.doc is None:
             return
 
-        for item in self.doc.getElementsByTagName('item'):
-            result = {'origin': self.name}
+        for item in self.doc.getElementsByTagName("item"):
+            result = {"origin": self.name}
             result.update(self.entry(item))
             yield result
