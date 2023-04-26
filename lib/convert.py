@@ -16,7 +16,7 @@ class Convert:
 
     def _read(self):
         if path.exists(self.args.cache):
-            with open(self.args.cache, "r") as handle:
+            with open(self.args.cache, "r", encoding=ENCODING) as handle:
                 return load(handle)
         return []
 
@@ -33,7 +33,7 @@ class Convert:
         )
 
     def _write(self, cache):
-        with open(self.args.cache, "w") as handle:
+        with open(self.args.cache, "w", encoding=ENCODING) as handle:
             dump(cache, handle, indent=2)
         return cache
 

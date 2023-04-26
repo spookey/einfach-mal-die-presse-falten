@@ -35,7 +35,7 @@ class Generate:
                 data=False,
                 **{"isPermaLink": "false"}
                 if entry["link"] != entry["guid"]
-                else {}
+                else {},
             )
             origin = entry["origin"].upper()
             for char in ("_", "/"):
@@ -43,7 +43,7 @@ class Generate:
             self.append(
                 item,
                 "description",
-                text="{} {}".format(origin, entry["description"]),
+                text=f"{origin} {entry['description']}",
                 data=True,
             )
             for field in ("link", "pubDate"):
@@ -63,6 +63,6 @@ class Generate:
             chan.appendChild(item)
         feed = doc.toprettyxml(indent="  ", encoding=ENCODING).decode(ENCODING)
 
-        with open(self.conv.args.file, "w") as handle:
+        with open(self.conv.args.file, "w", encoding=ENCODING) as handle:
             return handle.write(feed) > 0
         return False

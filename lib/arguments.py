@@ -8,8 +8,8 @@ def arguments(name, excludes):
     file = path.extsep.join((name, "xml"))
     cache = path.extsep.join((name, "json"))
 
-    def _help(txt):
-        return '{} (default "%(default)s")'.format(txt)
+    def _help(text):
+        return f'{text} (default "%(default)s")'
 
     parser = ArgumentParser(name, epilog="-.-")
     parser.add_argument(
@@ -40,7 +40,7 @@ def arguments(name, excludes):
     parser.add_argument(
         "-d",
         "--desc",
-        default="{} Breaking News".format(title),
+        default=f"{title} Breaking News",
         help=_help("feed description"),
     )
     parser.add_argument(
