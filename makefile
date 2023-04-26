@@ -1,3 +1,4 @@
+CMD_BLACK		:=	black
 CMD_ISORT		:=	isort
 CMD_PYLINT		:=	pylint
 
@@ -11,27 +12,32 @@ help:
 	@echo "Einfach mal die Presse falten!"
 	@echo "------------------------------"
 	@echo
-	@echo "sort             run isort on code"
+	@echo "isort            run isort on code"
+	@echo "black            run black on code"
 	@echo "lint             run pylint on code"
 
 
 define _isort
 	$(CMD_ISORT) \
-		--combine-star \
-		--force-sort-within-sections \
 		--line-width="79" \
-		--multi-line "VERTICAL_HANGING_INDENT" \
-		--trailing-comma \
-		--force-grid-wrap 0 \
-		--use-parentheses \
-		--ensure-newline-before-comments \
+		--profile="black" \
 	$(1)
 endef
 
-.PHONY: sort
-sort:
+.PHONY: isort
+isort:
 	$(call _isort,"$(DIR_LIB)" "$(SCR_FRP)" "$(SCR_LVZ)")
 
+
+define _black
+	$(CMD_BLACK) \
+		--line-length="79" \
+	$(1)
+endef
+
+.PHONY: black
+black:
+	$(call _black,"$(DIR_LIB)" "$(SCR_FRP)" "$(SCR_LVZ)")
 
 
 define PYLINT_MESSAGE_TEMPLATE
