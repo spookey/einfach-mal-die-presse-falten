@@ -37,7 +37,10 @@ class Fetch:
                     elem.firstChild.data if elem.hasChildNodes() else elem.data
                 ).strip()
                 if content:
-                    yield (elem.nodeName, content)
+                    yield (
+                        elem.nodeName,
+                        content,
+                    )
 
     def __call__(self):
         if self.doc is None:

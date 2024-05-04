@@ -33,9 +33,11 @@ class Generate:
                 "guid",
                 text=entry["guid"],
                 data=False,
-                **{"isPermaLink": "false"}
-                if entry["link"] != entry["guid"]
-                else {},
+                **(
+                    {"isPermaLink": "false"}
+                    if entry["link"] != entry["guid"]
+                    else {}
+                ),
             )
             origin = entry["origin"].upper()
             for char in ("_", "/"):
