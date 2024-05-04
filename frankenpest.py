@@ -9,7 +9,7 @@ from lib.generate import Generate
 
 BASE_URL = "https://www.frankenpost.de"
 FEED_INPUT = {
-    name: "".join([BASE_URL, "/", name, ".rss.feed"])
+    name: f"{BASE_URL}/{name}.rss.feed"
     for name in (
         "topmeldung",
         "auf-einen-blick",

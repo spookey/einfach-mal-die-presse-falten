@@ -3,10 +3,10 @@ from os import path
 
 
 def arguments(name, excludes):
-    name, _ = path.splitext(path.basename(name).lower())
+    name, *_ = path.splitext(path.basename(name))
     title = " ".join(nm.capitalize() for nm in name.split("_"))
-    file = path.extsep.join((name, "xml"))
-    cache = path.extsep.join((name, "json"))
+    file = f"{name}{path.extsep}xml"
+    cache = f"{name}{path.extsep}json"
 
     def _help(text):
         return f'{text} (default "%(default)s")'
