@@ -20,10 +20,9 @@ def _fetch_html(elem):
 
     try:
         with urlopen(link) as resp:
-            html = resp.read().decode(ENCODING)
+            return resp.read().decode(ENCODING)
     except URLError:
         return None
-    return html
 
 
 def frankenpest_fetch_full(elem):

@@ -32,8 +32,12 @@ FEED_INPUT = {
 
 def main():
     args = arguments(__file__, FEED_INPUT)
-    conv = Convert(args, FEED_INPUT, extra=frankenpest_fetch_full)
-    return 0 if Generate(conv)(BASE_URL) else 1
+    convert = Convert(args, FEED_INPUT, extra=frankenpest_fetch_full)
+    generate = Generate(convert)
+
+    if not generate(BASE_URL):
+        return 1
+    return 0
 
 
 if __name__ == "__main__":

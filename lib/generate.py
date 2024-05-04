@@ -7,18 +7,16 @@ from lib.extra import ENCODING
 class Generate:
     def __init__(self, conv):
         self.conv = conv
-        self.dom = getDOMImplementation().createDocument(None, "rss", None)
+        impl = getDOMImplementation()
+        self.dom = impl.createDocument(None, "rss", None)
 
     def append(self, parent, tag, text=None, data=False, **attrs):
         node = self.dom.createElement(tag)
         if text is not None:
-            node.appendChild(
-                (
-                    self.dom.createCDATASection
-                    if data
-                    else self.dom.createTextNode
-                )(text)
-            )
+            func = self.dom.createTextNode
+            if data:
+                func = self.dom.createCDATASection
+            node.appendChild(func(text))
         for name, value in attrs.items():
             node.setAttribute(name, value)
         parent.appendChild(node)
@@ -63,8 +61,8 @@ class Generate:
         self.append(chan, "pubDate", format_datetime(self.conv.now))
         for item in self.items():
             chan.appendChild(item)
+
         feed = doc.toprettyxml(indent="  ", encoding=ENCODING).decode(ENCODING)
 
         with open(self.conv.args.file, "w", encoding=ENCODING) as handle:
             return handle.write(feed) > 0
-        return False
