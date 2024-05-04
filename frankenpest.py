@@ -9,21 +9,21 @@ from lib.generate import Generate
 
 BASE_URL = "https://www.frankenpost.de"
 FEED_INPUT = {
-    name: f"{BASE_URL}/{name}.rss.feed"
+    name: f"{BASE_URL}/{name}.rss2.feed"
     for name in (
         "topmeldung",
         "auf-einen-blick",
         "region",
         "region/hof",
         "region/rehau",
-        # 'region/naila',
-        # 'region/muenchberg',
+        "region/naila",
+        "region/muenchberg",
         "region/fichtelgebirge",
         "region/wunsiedel",
         "region/marktredwitz",
         "region/selb",
         "region/arzberg",
-        # 'region/kulmbach',
+        "region/kulmbach",
         "sport/ver_selb",
         "sport/bayern_hof",
     )
