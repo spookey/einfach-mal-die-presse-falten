@@ -4,7 +4,6 @@ CMD_PYLINT		:=	pylint
 
 DIR_LIB			:=	lib
 SCR_FRP			:=	frankenpest.py
-SCR_LVZ			:=	leipziger_vollzeitung.py
 
 
 .PHONY: help
@@ -26,7 +25,7 @@ endef
 
 .PHONY: isort
 isort:
-	$(call _isort,"$(DIR_LIB)" "$(SCR_FRP)" "$(SCR_LVZ)")
+	$(call _isort,"$(DIR_LIB)" "$(SCR_FRP)")
 
 
 define _black
@@ -37,7 +36,7 @@ endef
 
 .PHONY: black
 black:
-	$(call _black,"$(DIR_LIB)" "$(SCR_FRP)" "$(SCR_LVZ)")
+	$(call _black,"$(DIR_LIB)" "$(SCR_FRP)")
 
 
 define PYLINT_MESSAGE_TEMPLATE
@@ -56,4 +55,4 @@ endef
 
 .PHONY: lint
 lint:
-	$(call _lint,"$(DIR_LIB)" "$(SCR_FRP)" "$(SCR_LVZ)")
+	$(call _lint,"$(DIR_LIB)" "$(SCR_FRP)")
