@@ -1,6 +1,11 @@
-CMD_BLACK		:=	black
-CMD_ISORT		:=	isort
-CMD_PYLINT		:=	pylint
+VER_PY			:= 3.9
+DIR_VENV		:= venv
+
+CMD_BLACK		:= $(DIR_VENV)/bin/black
+CMD_ISORT		:= $(DIR_VENV)/bin/isort
+CMD_PIP			:= $(DIR_VENV)/bin/pip$(VER_PY)
+CMD_PYLINT		:= $(DIR_VENV)/bin/pylint
+LIB_BSOUP		:= $(DIR_VENV)/lib/python$(VER_PY)/site-packages/bs4/__init__.py
 
 SOURCES			:= \
 					"lib" \
@@ -12,24 +17,47 @@ help:
 	@echo "Einfach mal die Presse falten!"
 	@echo "------------------------------"
 	@echo
+	@echo "venv             create virtualenv"
+	@echo "requirements     install requirements into venv"
+	@echo "...-dev          ... development requirements ..."
+	@echo
 	@echo "isort            run isort on code"
 	@echo "black            run black on code"
 	@echo "pylint           run pylint on code"
+	@echo
+	@echo "action           run all above"
+
+
+$(DIR_VENV):
+	python$(VER_PY) -m venv "$(DIR_VENV)"
+	$(CMD_PIP) install -U pip setuptools
+$(LIB_BSOUP): $(DIR_VENV)
+	$(CMD_PIP) install -r "requirements.txt"
+$(CMD_BLACK) $(CMD_ISORT) $(CMD_PYLINT): $(DIR_VENV)
+	$(CMD_PIP) install -r "requirements-dev.txt"
+
+.PHONY: requirements
+requirements: $(LIB_BSOUP)
+.PHONY: requirements-dev
+requirements-dev: $(CMD_BLACK) $(CMD_ISORT) $(CMD_PYLINT)
 
 
 .PHONY: isort
-isort:
+isort: requirements-dev
 	$(CMD_ISORT) --line-length="79" --profile="black" $(SOURCES)
 
 .PHONY: black
-black:
+black: requirements-dev
 	$(CMD_BLACK) --line-length="79" $(SOURCES)
 
 .PHONY: pylint
-pylint:
+pylint: requirements-dev
 	$(CMD_PYLINT) \
 		--disable="missing-class-docstring" \
 		--disable="missing-function-docstring" \
 		--disable="missing-module-docstring" \
 		--output-format="colorized" \
 	$(SOURCES)
+
+.PHONY: action
+action: isort black pylint
