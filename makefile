@@ -1,4 +1,4 @@
-VER_PY			:= 3.9
+VER_PY			:= 3.11
 DIR_VENV		:= venv
 
 CMD_BLACK		:= $(DIR_VENV)/bin/black
