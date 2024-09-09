@@ -33,14 +33,15 @@ class Fetch:
         for elem in item.childNodes:
             if elem.nodeName in FIELDS:
                 elem.normalize()
-                content = unescape(
-                    elem.firstChild.data if elem.hasChildNodes() else elem.data
-                ).strip()
-                if content:
-                    yield (
-                        elem.nodeName,
-                        content,
-                    )
+                node = elem.firstChild if elem.hasChildNodes() else elem
+                data = getattr(node, "data", None)
+                if data:
+                    content = unescape(data).strip()
+                    if content:
+                        yield (
+                            elem.nodeName,
+                            content,
+                        )
 
     def __call__(self):
         if self.doc is None:
