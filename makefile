@@ -1,11 +1,10 @@
-VER_PY			:= 3.11
 DIR_VENV		:= venv
 
 CMD_BLACK		:= $(DIR_VENV)/bin/black
 CMD_ISORT		:= $(DIR_VENV)/bin/isort
-CMD_PIP			:= $(DIR_VENV)/bin/pip$(VER_PY)
+CMD_PIP			:= $(DIR_VENV)/bin/pip3
 CMD_PYLINT		:= $(DIR_VENV)/bin/pylint
-LIB_BSOUP		:= $(DIR_VENV)/lib/python$(VER_PY)/site-packages/bs4/__init__.py
+LIB_BSOUP		:= $(DIR_VENV)/lib/python\\*/site-packages/bs4/__init__.py
 
 SOURCES			:= \
 					"lib" \
@@ -29,7 +28,7 @@ help:
 
 
 $(DIR_VENV):
-	python$(VER_PY) -m venv "$(DIR_VENV)"
+	python3 -m venv "$(DIR_VENV)"
 	$(CMD_PIP) install -U pip setuptools
 $(LIB_BSOUP): $(DIR_VENV)
 	$(CMD_PIP) install -r "requirements.txt"
