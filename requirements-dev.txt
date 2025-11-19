@@ -1,7 +1,7 @@
 -r requirements.txt
-black==24.4.2
-isort==5.13.2
-pylint==3.1.0
+black==25.11.0
+isort==6.1.0
+pylint==3.3.9
 
 # debugging util
 pudb
